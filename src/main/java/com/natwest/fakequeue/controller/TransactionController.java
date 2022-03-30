@@ -33,5 +33,10 @@ public class TransactionController {
 		
 	}
 	
+	@RequestMapping(value = "transaction/receiver", method = RequestMethod.POST)
+	public ResponseEntity<Integer> receiverTransaction(@RequestBody String transactionCipher) throws Exception{
+		Integer accountNumber = transactionService.receiverTransaction(transactionCipher);
+		return new ResponseEntity<Integer>(accountNumber, HttpStatus.CREATED);
+	}
 	
 }

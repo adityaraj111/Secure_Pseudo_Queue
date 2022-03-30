@@ -58,6 +58,33 @@ public class TransactionServiceImpl {
 		return result;
 	}
 	
+	public Integer receiverTransaction(String transactionCipher) throws Exception {
+		// decrypt the data
+		String decryptedString = AES.decrypt(transactionCipher, secretKey) ;
+		Map<String, String> tr_map = parseMap(decryptedString);
+		TransactionEntity trEntity = new TransactionEntity();
+		trEntity.setAccountNumber(tr_map.get("Transaction [accountNumber"));
+		trEntity.setType(tr_map.get("type"));
+		trEntity.setAmount(tr_map.get("amount"));
+		trEntity.setCurrency(tr_map.get("currency"));
+		String temp = tr_map.get("accountForm");
+		String acc_form = temp.substring(0, temp.length() - 1);
+		trEntity.setAccountForm(acc_form);
+		
+		// persist data
+		TransactionEntity res = transactionDAO.save(trEntity);
+		
+		return trEntity.getTransactionId();
+	}
+	
+	public static Map<String,String> parseMap(String tr) {
+	    Map<String,String> map = new LinkedHashMap<String,String>();
+	    for(String keyValue: tr.split(", ")) {
+	        String[] parts = keyValue.split("=", 2);
+	        map.put(parts[0], parts[1]);
+	    }
+	    return map;
+	}
 	
 	
 
